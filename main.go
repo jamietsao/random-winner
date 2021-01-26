@@ -38,27 +38,36 @@ func main() {
 }
 
 func winner(names []string) {
-	count := len(names)
+	nameCount := len(names)
+	longest := 0
+	for _, names := range names {
+		if len(names) > longest {
+			longest = len(names)
+		}
+	}
 
 	fmt.Printf("First to %d wins!\n", target)
-	fmt.Printf("%s", strings.Repeat("\n", count))
+	fmt.Printf("%s", strings.Repeat("\n", nameCount))
 
 	// run until winner is determined
+	runs := 0
 	winner := ""
 	results := make(map[string]int)
 	for {
+		runs++
+
 		// random choice
-		i := rand.Intn(count)
+		i := rand.Intn(nameCount)
 		results[names[i]]++
 
 		// move cursor back to top left
-		fmt.Printf("\u001b[%dD\u001b[%dA", 50, count)
+		fmt.Printf("\u001b[%dD\u001b[%dA", 50, nameCount)
 
 		// print current progress
 		multiplier := target / 100
 		for _, name := range names {
 			width := results[name] / (2 * multiplier)
-			fmt.Printf("[%10v => %s%s]\n", name, strings.Repeat("#", width), strings.Repeat(" ", 50-width))
+			fmt.Printf("[%*v => %s%s]\n", longest+1, name, strings.Repeat("#", width), strings.Repeat(" ", 50-width))
 		}
 
 		// stop once someone hits the target
@@ -71,10 +80,11 @@ func winner(names []string) {
 	}
 
 	// display final results
-	fmt.Printf("\nFinal tally:\n")
+	fmt.Printf("\nFINAL TALLY:\n")
 	for _, name := range names {
-		fmt.Printf("%10v: %d\n", name, results[name])
+		fmt.Printf("%*v: %d\n", longest+1, name, results[name])
 	}
+	fmt.Printf("%*v: %d\n", longest+1, "TOTAL", runs)
 
 	// drumroll, please
 	fmt.Printf("\nThe winner is ....... %s!\n", strings.ToUpper(winner))
