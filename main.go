@@ -7,16 +7,20 @@ import (
 	"time"
 )
 
+const (
+	target = 1000
+)
+
 // backend team
-var team = map[int]string{
-	0: "Brandon",
-	1: "Bigo",
-	2: "Jeff",
-	3: "Benny",
-	4: "Andy",
-	5: "Eric",
-	6: "Leilani",
-	7: "Carmen",
+var team = []string{
+	"Brandon",
+	"Bigo",
+	"Jeff",
+	"Benny",
+	"Andy",
+	"Eric",
+	"Leilani",
+	"Carmen",
 }
 
 func main() {
@@ -28,44 +32,42 @@ func main() {
 }
 
 func winner() {
-	results := make(map[string]int)
+	fmt.Printf("First to %d wins!", target)
+	fmt.Printf("%s", strings.Repeat("\n", len(team)))
 
-	// run 10 million times
-	for i := 0; i < 10000000; i++ {
+	// run until winner is determined
+	winner := ""
+	results := make(map[string]int)
+	for {
+		// random choice
 		i := rand.Intn(len(team))
 		results[team[i]]++
+
+		// move cursor back to top left
+		fmt.Printf("\u001b[%dD\u001b[%dA", 50, len(team))
+
+		// print current progress
+		multiplier := target / 100
+		for _, name := range team {
+			width := results[name] / (2 * multiplier)
+			fmt.Printf("[%10v => %s%s]\n", name, strings.Repeat("#", width), strings.Repeat(" ", 50-width))
+		}
+
+		// stop once someone hits the target
+		if results[team[i]] == target {
+			winner = team[i]
+			break
+		}
+
+		time.Sleep(1 * time.Millisecond)
 	}
 
-	// find winner
-	winner := ""
-	top := 0
-	fmt.Printf("\n")
-	for name, count := range results {
-		if count > top {
-			winner = name
-			top = count
-		}
-		fmt.Printf("%10v => %d\n", name, count)
+	// display final results
+	fmt.Printf("\nFinal tally:\n")
+	for _, name := range team {
+		fmt.Printf("%10v: %d\n", name, results[name])
 	}
 
 	// drumroll, please
-	fmt.Printf("\nThe winner is .......\n")
-
-	ticker := time.NewTicker(500 * time.Millisecond)
-	done := make(chan bool)
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case <-ticker.C:
-				fmt.Printf("🥁\n")
-			}
-		}
-	}()
-	time.Sleep(3 * time.Second)
-	ticker.Stop()
-	done <- true
-
-	fmt.Printf("\n%s!!\n", strings.ToUpper(winner))
+	fmt.Printf("\nThe winner is ....... %s!\n", strings.ToUpper(winner))
 }
