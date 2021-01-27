@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
 
 const (
 	target = 1000
+	snail  = "🐌"
 )
 
 func init() {
@@ -66,8 +68,9 @@ func winner(names []string) {
 		// print current progress
 		multiplier := target / 100
 		for _, name := range names {
+			// show progress as a portion of 50 marks
 			width := results[name] / (2 * multiplier)
-			fmt.Printf("[%*v => %s%s]\n", longest+1, name, strings.Repeat("#", width), strings.Repeat(" ", 50-width))
+			fmt.Printf("[%*v _%s%s%s]\n", longest+1, name, strings.Repeat("_", width), snail, strings.Repeat(" ", 50-width))
 		}
 
 		// stop once someone hits the target
@@ -79,12 +82,18 @@ func winner(names []string) {
 		time.Sleep(1 * time.Millisecond)
 	}
 
-	// display final results
-	fmt.Printf("\nFINAL TALLY:\n")
+	// sort & display final results
+	sort.Slice(names, func(i, j int) bool {
+		// reverse sort to show highest to lowest
+		return results[names[i]] > results[names[j]]
+	})
+
+	fmt.Printf("\n  FINAL RESULTS  \n")
+	fmt.Printf("------------------\n")
 	for _, name := range names {
-		fmt.Printf("%*v: %d\n", longest+1, name, results[name])
+		fmt.Printf("%*v %5d\n", longest+1, name, results[name])
 	}
-	fmt.Printf("%*v: %d\n", longest+1, "TOTAL", runs)
+	fmt.Printf("\n%*v %5d\n", longest+1, "TOTAL", runs)
 
 	// drumroll, please
 	fmt.Printf("\nThe winner is ....... %s!\n", strings.ToUpper(winner))
