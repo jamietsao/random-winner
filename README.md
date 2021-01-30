@@ -5,6 +5,7 @@ After receiving a $100 gift card to DoorDash for taking a sales call with a soft
 After reading this wonderful [post](https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html) about [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), this silly program I wrote a few months back was the perfect opportunity to dabble with them.  So instead of immediately displaying the final results with an anti-climatic drumroll (see original version below), I used ANSI escape codes to simulate a dramatic race to the finish line.
 
 Here was the original version:
+
 ![Original](gifs/original.gif)
 
 Tada!
