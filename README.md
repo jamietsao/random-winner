@@ -6,7 +6,8 @@ After reading this wonderful [post](https://www.lihaoyi.com/post/BuildyourownCom
 
 Here was the original version:
 
-![Original](gifs/original.gif)
+<img src="gifs/original.gif" width=50% height=50%>
+
 
 Tada!
 <TODO>
