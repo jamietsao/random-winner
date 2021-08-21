@@ -1,71 +1,100 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
+	"os"
+	"sort"
 	"strings"
 	"time"
 )
 
-// backend team
-var team = map[int]string{
-	0: "Brandon",
-	1: "Bigo",
-	2: "Jeff",
-	3: "Benny",
-	4: "Andy",
-	5: "Eric",
-	6: "Leilani",
-	7: "Carmen",
+const (
+	target = 1000
+	snail  = "🐌"
+)
+
+func init() {
+	// seed rng
+	rand.Seed(time.Now().UnixNano())
 }
 
 func main() {
-	// seed it!
-	rand.Seed(time.Now().UnixNano())
+	var nameStr string
+
+	// parse flags
+	flag.StringVar(&nameStr, "names", "", "Comma separated list of names")
+	flag.Parse()
+
+	names := strings.Split(nameStr, ",")
+
+	if len(names) < 2 {
+		fmt.Println("Must supply at least two names via -names flag:")
+		flag.Usage()
+		os.Exit(0)
+	}
 
 	// pick winner
-	winner()
+	winner(names)
 }
 
-func winner() {
-	results := make(map[string]int)
-
-	// run 10 million times
-	for i := 0; i < 10000000; i++ {
-		i := rand.Intn(len(team))
-		results[team[i]]++
-	}
-
-	// find winner
-	winner := ""
-	top := 0
-	fmt.Printf("\n")
-	for name, count := range results {
-		if count > top {
-			winner = name
-			top = count
+func winner(names []string) {
+	nameCount := len(names)
+	longest := 0
+	for _, names := range names {
+		if len(names) > longest {
+			longest = len(names)
 		}
-		fmt.Printf("%10v => %d\n", name, count)
 	}
+
+	fmt.Printf("First to %d wins!\n", target)
+	fmt.Printf("%s", strings.Repeat("\n", nameCount))
+
+	// run until winner is determined
+	runs := 0
+	winner := ""
+	results := make(map[string]int)
+	for {
+		runs++
+
+		// random choice
+		i := rand.Intn(nameCount)
+		results[names[i]]++
+
+		// move cursor back to top left
+		fmt.Printf("\u001b[%dD\u001b[%dA", 50, nameCount)
+
+		// print current progress
+		multiplier := target / 100
+		for _, name := range names {
+			// show progress as a portion of 50 marks
+			width := results[name] / (2 * multiplier)
+			fmt.Printf("[%*v _%s%s%s]\n", longest+1, name, strings.Repeat("_", width), snail, strings.Repeat(" ", 50-width))
+		}
+
+		// stop once someone hits the target
+		if results[names[i]] == target {
+			winner = names[i]
+			break
+		}
+
+		time.Sleep(1 * time.Millisecond)
+	}
+
+	// sort & display final results
+	sort.Slice(names, func(i, j int) bool {
+		// reverse sort to show highest to lowest
+		return results[names[i]] > results[names[j]]
+	})
+
+	fmt.Printf("\n  FINAL RESULTS  \n")
+	fmt.Printf("------------------\n")
+	for _, name := range names {
+		fmt.Printf("%*v %5d\n", longest+1, name, results[name])
+	}
+	fmt.Printf("\n%*v %5d\n", longest+1, "TOTAL", runs)
 
 	// drumroll, please
-	fmt.Printf("\nThe winner is .......\n")
-
-	ticker := time.NewTicker(500 * time.Millisecond)
-	done := make(chan bool)
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case <-ticker.C:
-				fmt.Printf("🥁\n")
-			}
-		}
-	}()
-	time.Sleep(3 * time.Second)
-	ticker.Stop()
-	done <- true
-
-	fmt.Printf("\n%s!!\n", strings.ToUpper(winner))
+	fmt.Printf("\nThe winner is ....... %s!\n", strings.ToUpper(winner))
 }
