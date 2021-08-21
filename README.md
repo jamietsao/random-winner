@@ -1,18 +1,26 @@
 # random-winner
-After receiving a $100 gift card to DoorDash for taking a sales call with a software vendor, I decided to give it to someone random on the team.  I wrote a quick program to select the winner 🤓.
+After receiving a $100 gift card to DoorDash for taking a sales call with a software vendor, I wanted to give it to someone random on the team.  As a manager that rarely gets to write code these days, I decided to write a quick program to select the winner 🤓.
 
 ## UPDATE - 1/26/21
 After reading this wonderful [post](https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html) about [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), this silly program I wrote a few months back was the perfect opportunity to dabble with them.  So instead of immediately displaying the final results with an anti-climatic drumroll (see original version below), I used ANSI escape codes to simulate a dramatic race to the finish line.
 
-Here was the original version:
+Here was the original version from 8/4/20:
 
-<img src="gifs/original.gif" width=50% height=50%>
+<img src="gifs/original.gif">
 
+Here's the latest version using ANSI escape codes (and of course emojis):
 
-Tada!
-<TODO>
-     
+<img src="gifs/latest.gif">
 
+## Wanna use yourself?
+1. Download script:
+    - If you have Go installed: `go get github.com/jamietsao/random-winner`
+    - Else download the binary directly: https://github.com/jamietsao/random-winner/releases
+5. Run script:
+
+`random-winner -names=Steph,Klay,Draymond,Iggy,Bogut`
+
+***
 
 ## Original Version (run on 8/4/20)
 ### Drumroll, please ... 🥁🥁🥁🥁
